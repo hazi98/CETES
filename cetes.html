@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.9.95/css/materialdesignicons.min.css"
+        crossorigin="anonymous">
+    <title>CETES</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">
+    </script>
+    <script src="cetes.js"></script>
+
+</head>
+
+<body onload="actualizarInversion()">
+    <div class="container">
+        <h1 class="my-3">Modelo de CETES</h1>
+        <div class="accordion" id="accordion-cetes">
+            <div class="card">
+                <form action="" class="needs-validation" id="datos-iniciales"
+                    onsubmit="event.preventDefault(); continuar();">
+                    <div class="card-header" id="heading-datos-iniciales">
+                        <h2>
+                            <button class="btn btn-outline-secondary mdi mdi-chart-donut" type="button"
+                                data-toggle="collapse" data-target="#body-datos-iniciales">
+                                Datos iniciales
+                            </button>
+                        </h2>
+                    </div>
+                    <div class="collapse show" id="body-datos-iniciales" data-parent="#accordion-cetes">
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="inversion-inicial-usd">Inversión inicial (USD)</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">USD</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01"
+                                            name="input-inversion-inicial" id="inversion-inicial-usd" min="0"
+                                            onchange="actualizarInversion()" required>
+                                        <div class="invalid-feedback">
+                                            Ingrese una inversión inicial.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="fx-usd">Fx USD → MXN</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <input class="form-control price" type="number" name="input-fx-usd" id="fx-usd"
+                                            min="0" step="0.01" onchange="actualizarInversion()" required>
+
+                                        <div class="invalid-feedback">
+                                            Ingrese un factor de conversión de USD a MXN.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="inversion-inicial-mxn">Inversión inicial (MXN)</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01"
+                                            name="input-inversion-inicial" id="inversion-inicial-mxn" min="0" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="valor-nominal">Valor nominal</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01" name="input-valor-nominal"
+                                            id="valor-nominal" min="0" value="10.00" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="tasa-rendimiento">Tasa de rendimiento</label>
+                                    <div class="input-group mb-3">
+                                        <input class="form-control" type="number" step="0.01"
+                                            name="input-tasa-rendimiento" id="tasa-rendimiento" min="0" value="7.01"
+                                            readonly>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="termino-plazo">Término del plazo</label>
+                                    <div class="input-group mb-3">
+                                        <select name="select-termino-plazo" id="termino-plazo" class="custom-select"
+                                            onchange="actualizarInversion()">
+                                            <option value="28">28</option>
+                                            <option value="91">91</option>
+                                            <option selected value="182">182</option>
+                                            <option value="336">336</option>
+                                        </select>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">días</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="tasa-descuento">Tasa de descuento</label>
+                                    <div class="input-group mb-3">
+                                        <input class="form-control" type="number" step="0.01"
+                                            name="input-tasa-descuento" id="tasa-descuento" min="0" readonly>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="precio-cete">Precio CETE</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01" name="input-precio-cete"
+                                            id="precio-cete" min="0" value="0.00" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="numero-titulos">Número de títulos</label>
+                                    <div class="input-group mb-3">
+                                        <input class="form-control" type="number" name="input-numero-titulos"
+                                            id="numero-titulos" min="0" value="0" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="inversion-capital">Inversión capital</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01"
+                                            name="input-inversion-capital" id="inversion-capital" min="0" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 mb-3">
+                                    <label for="dias-despues">Días después</label>
+                                    <div class="input-group mb-3">
+                                        <input class="form-control" type="number" name="input-dias-despues"
+                                            id="dias-despues" min="0" required onchange="actualizarSimulacion()">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">días</span>
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Ingrese un número válido.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 mb-3">
+                                    <label for="num-simulaciones">Número de iteraciones</label>
+                                    <input class="form-control" type="number" min="1" id="num-simulaciones" required>
+                                    <div class="invalid-feedback">
+                                        Ingrese un número válido.
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary mdi mdi-check" value="Send">Continuar</button>
+                            <button type="reset" class="btn btn-danger mdi mdi-delete">Restablecer</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card">
+                <form action="">
+                    <div class="card-header" id="heading-datos-simulacion">
+                        <h2>
+                            <button class="btn btn-outline-secondary mdi mdi-refresh" type="button"
+                                data-toggle="collapse" data-target="#body-datos-simulacion" id="btn-datos-simulacion">
+                                Datos de simulación
+                            </button>
+                        </h2>
+                    </div>
+                    <div class="collapse" id="body-datos-simulacion" data-parent="#accordion-cetes">
+                        <div class="card-body" id="alert-datos-simulacion">
+                            <div class="alert alert-danger mdi mdi-alert" role="alert">
+                                Debe de introducir los datos iniciales para poder continuar.
+                            </div>
+                        </div>
+                        <div class="card-body" id="card-datos-simulacion" hidden>
+                            <div class="form-row">
+                                <div class="col-md-5 mb-3">
+                                    <label for="index-simulacion">Iteración</label>
+                                    <select name="select-index-simulacion" id="index-simulacion" class="form-control ">
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="tasa-cetes">Tasa CETES</label>
+                                    <div class="input-group mb-3">
+                                        <input class="form-control" type="number" name="input-tasa-cetes" step="0.01"
+                                            id="tasa-cetes" min="0" required onchange="actualizarSimulacion()">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Ingrese una tasa CETES válida.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="fx-usd-2">Fx USD → MXN nuevo</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01" name="input-fx-usd-2"
+                                            id="fx-usd-2" min="0" required onchange="actualizarSimulacion()">
+                                        <div class="invalid-feedback">
+                                            Ingrese una factor de conversión válido.
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="dias-restantes">Días restantes</label>
+                                    <div class="input-group mb-3">
+                                        <input class="form-control" type="number" name="input-dias-restantes"
+                                            id="dias-restantes" min="0" readonly>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">días</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="tasa-descuento-2">Tasa de descuento</label>
+                                    <div class="input-group mb-3">
+                                        <input class="form-control" type="number" name="input-tasa-descuento-2"
+                                            id="tasa-descuento-2" min="0" readonly>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="precio-cete-2">Precio CETE</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01" name="input-precio-cete-2"
+                                            value="0.00" id="precio-cete-2" min="0" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="mxn-principales">Inversión inicial nuevo Fx (MXN)</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01"
+                                            name="input-mxn-principales" id="mxn-principales" min="0" value="0.00"
+                                            readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="usd-principales">Inversión inicial nuevo Fx (USD)</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">USD</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01"
+                                            name="input-usd-principales" id="usd-principales" min="0" value="0.00"
+                                            readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="pandl-mxn">Profit & Loss (MXN)</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01" name="input-pandl-mxn"
+                                            value="0.00" id="pandl-mxn" min="0" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="pandl-usd">Profit & Loss (USD)</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">USD</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01" name="input-pandl-usd"
+                                            value="0.00" id="pandl-usd" min="0" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="pandl-fx-usd">Profit & Loss por Fx a USD</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">USD</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01" name="input-pandl-fx-usd"
+                                            value="0.00" id="pandl-fx-usd" min="0" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="pandl-netos-usd">Profit & Loss netos (USD)</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">USD</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01" value="0.00"
+                                            name="input-pandl-netos-usd" id="pandl-netos-usd" min="0" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary" value="Send">Guardar</button>
+                            <button type="reset" class="btn btn-warning mdi mdi-alert">Limpiar datos</button>
+                            <button type="button" class="btn btn-danger mdi mdi-delete">Restablecer
+                                simulaciones</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+</body>
+
+</html>
