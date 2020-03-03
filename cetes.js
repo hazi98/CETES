@@ -206,7 +206,7 @@ function actualizarSimulacion() {
     (1 + (tasaCetes * diasRestantes.value) / 360)
   ).toFixed(4);
   mxnPrincipales.value = (numTitulos * precio2.value).toFixed(2);
-  if (!isNaN(usdFx) && usdFx != "" && parseFloat(usdFx) != 0.00) {
+  if (!isNaN(usdFx) && usdFx != "" && parseFloat(usdFx) != 0.0) {
     usdPrincipales.value = (mxnPrincipales.value / usdFx).toFixed(2);
     mxnPandl.value = parseFloat(
       mxnPrincipales.value - inversionCapital
@@ -220,13 +220,52 @@ function actualizarSimulacion() {
 }
 
 function calcularTodo() {
-  var i = document.getElementById("index-simulacion").value;
-  var j = document.getElementById("index-tasa").value;
-  i -= 1; // Quitar 1
-  j -= 1; // Quitar 1
+  // Constantes
+  var invinicialUSD = document.getElementById("inversion-inicial-usd").value;
+  var invinicialMXN = document.getElementById("inversion-inicial-mxn").value;
+  var inversionCapital = document.getElementById("inversion-capital").value;
+  var valorNominal = document.getElementById("valor-nominal").value;
+  var terminoPlazo = document.getElementById("termino-plazo").value;
+  var numTitulos = document.getElementById("numero-titulos").value;
 
-  for (let i = 0; i < array.length; i++) {
+  // Parametros globales
+  var diasDespues = document.getElementById("dias-despues").value;
+  var numSimulaciones = document.getElementById("num-simulaciones").value;
+  var numTasas = document.getElementById("num-tasas").value;
+  numSimulaciones = parseInt(numSimulaciones);
+  numTasas = parseInt(numTasas);
 
+  for (let i = 0; i < numSimulaciones; i++) {
+    for (let j = 0; j < numTasas; j++) {
+      // Parametros puestos
+      let tasaCetes = TasaCetes[i][j];
+      let usdFx = UsdFx[i][j];
+
+      // Parametros por calcular
+      DiasRestantes[i][j] = terminoPlazo - diasDespues;
+      Precio2[i][j] = (
+        valorNominal /
+        (1 + (tasaCetes * DiasRestantes[i][j]) / 360)
+      ).toFixed(4);
+      TasaDescuento[i][j] = (
+        (tasaCetes / (1 + (tasaCetes * DiasRestantes[i][j]) / 360)) *
+        100
+      ).toFixed(4);
+      MxnPrincipales[i][j] = (numTitulos * Precio2[i][j]).toFixed(2);
+      if (!isNaN(usdFx) && usdFx != "" && parseFloat(usdFx) != 0.0) {
+        UsdPrincipales[i][j] = (MxnPrincipales[i][j] / usdFx).toFixed(2);
+        MxnPandl[i][j] = parseFloat(
+          MxnPrincipales[i][j] - inversionCapital
+        ).toFixed(2);
+        UsdPandl[i][j] = parseFloat(MxnPandl[i][j] / usdFx).toFixed(2);
+        PandlFx[i][j] = parseFloat(
+          UsdPrincipales[i][j] - invinicialUSD
+        ).toFixed(2);
+        PandlNetos[i][j] = (
+          parseFloat(PandlFx[i][j]) + parseFloat(UsdPandl[i][j])
+        ).toFixed(2);
+      }
+    }
   }
 }
 
@@ -315,39 +354,81 @@ function resultados() {
   var numTasas = document.getElementById("num-tasas").value;
   numTasas = parseInt(numTasas);
   var tablaResultados = document.getElementById("tabla-resultados");
-  tablaResultados.innerHTML = '';
+  tablaResultados.innerHTML = "";
   for (var i = 0; i < numSimulaciones; i++) {
-    for (var j = 0; j < (numTasas + 1); j++) {
+    for (var j = 0; j < numTasas + 1; j++) {
       // Poner tabla de resultados
       if (j == 0) {
         // Renglon de encabezados
-        tablaResultados.innerHTML += '<table class="table my-3"><thead><tr scope="col" id="row-iteracion-' + i + '"><th># Iteracion ' + (i + 1) + "</th></tr></thead><tbody>" +
-          '<tr id="row-tasa-cetes-' + i + '"><th>Tasa CETES</th></tr>' +
-          '<tr id="row-fx-usd-2-' + i + '"><th>Fx USD → MXN nuevo</th></tr>' +
-          '<tr id="row-dias-restantes-' + i + '"><th>Días restantes</th></tr>' +
-          '<tr id="row-tasa-descuento-2-' + i + '"><th>Tasa de descuento</th></tr>' +
-          '<tr id="row-precio-cete-2-' + i + '"><th>Precio CETE</th></tr>' +
-          '<tr id="row-mxn-principales-' + i + '"><th>Inversión inicial nuevo Fx (MXN)</th></tr>' +
-          '<tr id="row-usd-principales-' + i + '"><th>Inversión inicial nuevo Fx (USD)</th></tr>' +
-          '<tr id="row-pandl-mxn-' + i + '"><th>Profit & Loss (MXN)</th></tr>' +
-          '<tr id="row-pandl-usd-' + i + '"><th>Profit & Loss (USD)</th></tr>' +
-          '<tr id="row-pandl-fx-usd-' + i + '"><th>Profit & Loss por Fx a USD</th></tr>' +
-          '<tr id="row-pandl-netos-usd-' + i + '"><th>Profit & Loss netos (USD)</th></tr>';
-      }
-      else {
+        tablaResultados.innerHTML +=
+          '<table class="table my-3 table-responsive"><thead><tr scope="col" id="row-iteracion-' +
+          i +
+          '"><th># Iteracion ' +
+          (i + 1) +
+          "</th></tr></thead><tbody>" +
+          '<tr id="row-tasa-cetes-' +
+          i +
+          '"><th>Tasa CETES</th></tr>' +
+          '<tr id="row-fx-usd-2-' +
+          i +
+          '"><th>Fx USD → MXN nuevo</th></tr>' +
+          '<tr id="row-dias-restantes-' +
+          i +
+          '"><th>Días restantes</th></tr>' +
+          '<tr id="row-tasa-descuento-2-' +
+          i +
+          '"><th>Tasa de descuento</th></tr>' +
+          '<tr id="row-precio-cete-2-' +
+          i +
+          '"><th>Precio CETE</th></tr>' +
+          '<tr id="row-mxn-principales-' +
+          i +
+          '"><th>Inversión inicial nuevo Fx (MXN)</th></tr>' +
+          '<tr id="row-usd-principales-' +
+          i +
+          '"><th>Inversión inicial nuevo Fx (USD)</th></tr>' +
+          '<tr id="row-pandl-mxn-' +
+          i +
+          '"><th>Profit & Loss (MXN)</th></tr>' +
+          '<tr id="row-pandl-usd-' +
+          i +
+          '"><th>Profit & Loss (USD)</th></tr>' +
+          '<tr id="row-pandl-fx-usd-' +
+          i +
+          '"><th>Profit & Loss por Fx a USD</th></tr>' +
+          '<tr id="row-pandl-netos-usd-' +
+          i +
+          '"><th>Profit & Loss netos (USD)</th></tr>';
+      } else {
         // Renglones
         $("#row-iteracion-" + i).append("<th>" + (i + 1) + ", " + j + "</th>");
-        $("#row-tasa-cetes-" + i).append("<td>" + TasaCetes[i][j - 1] + "</td>");
+        $("#row-tasa-cetes-" + i).append(
+          "<td>" + TasaCetes[i][j - 1] + "</td>"
+        );
         $("#row-fx-usd-2-" + i).append("<td>" + UsdFx[i][j - 1] + "</td>");
-        $("#row-dias-restantes-" + i).append("<td>" + DiasRestantes[i][j - 1] + "</td>");
-        $("#row-tasa-descuento-2-" + i).append("<td>" + TasaDescuento[i][j - 1] + "</td>");
-        $("#row-precio-cete-2-" + i).append("<td>" + Precio2[i][j - 1] + "</td>");
-        $("#row-mxn-principales-" + i).append("<td>" + MxnPrincipales[i][j - 1] + "</td>");
-        $("#row-usd-principales-" + i).append("<td>" + UsdPrincipales[i][j - 1] + "</td>");
+        $("#row-dias-restantes-" + i).append(
+          "<td>" + DiasRestantes[i][j - 1] + "</td>"
+        );
+        $("#row-tasa-descuento-2-" + i).append(
+          "<td>" + TasaDescuento[i][j - 1] + "</td>"
+        );
+        $("#row-precio-cete-2-" + i).append(
+          "<td>" + Precio2[i][j - 1] + "</td>"
+        );
+        $("#row-mxn-principales-" + i).append(
+          "<td>" + MxnPrincipales[i][j - 1] + "</td>"
+        );
+        $("#row-usd-principales-" + i).append(
+          "<td>" + UsdPrincipales[i][j - 1] + "</td>"
+        );
         $("#row-pandl-mxn-" + i).append("<td>" + MxnPandl[i][j - 1] + "</td>");
         $("#row-pandl-usd-" + i).append("<td>" + UsdPandl[i][j - 1] + "</td>");
-        $("#row-pandl-fx-usd-" + i).append("<td>" + PandlFx[i][j - 1] + "</td>");
-        $("#row-pandl-netos-usd-" + i).append("<td>" + PandlNetos[i][j - 1] + "</td>");
+        $("#row-pandl-fx-usd-" + i).append(
+          "<td>" + PandlFx[i][j - 1] + "</td>"
+        );
+        $("#row-pandl-netos-usd-" + i).append(
+          "<td>" + PandlNetos[i][j - 1] + "</td>"
+        );
       }
     }
     tablaResultados.innerHTML += "</tbody></table>";
@@ -368,28 +449,39 @@ function probabilidad() {
   var numTasas = document.getElementById("num-tasas").value;
   numTasas = parseInt(numTasas);
   var tablaProbabilidad = document.getElementById("tabla-probabilidad");
-  tablaProbabilidad.innerHTML = '';
+  tablaProbabilidad.innerHTML = "";
 
   var exitos = 0;
   var perdidas = 0;
   var total = numSimulaciones * numTasas;
 
   for (var i = 0; i < numSimulaciones; i++) {
-    for (var j = 0; j < (numTasas + 1); j++) {
+    for (var j = 0; j < numTasas + 1; j++) {
       if (j == 0) {
-        tablaProbabilidad.innerHTML += '<table class="table my-3"><thead><tr scope="col" id="row-iteracion-probabilidad-' + i + '"><th># Iteracion ' + (i + 1) + "</th></tr></thead><tbody>" +
-          '<tr id="row-fx-usd-probabilidad-' + i + '"><th>Fx ' + UsdFx[i][j] + "</th></tr>";
-      }
-      else {
-        $("#row-iteracion-probabilidad-" + i).append("<th>" + (i + 1) + ", " + j + "</th>");
-        $("#row-fx-usd-probabilidad-" + i).append("<td>" + PandlNetos[i][j - 1] + "</td>");
+        tablaProbabilidad.innerHTML +=
+          '<table class="table my-3 table-responsive"><thead><tr scope="col" id="row-iteracion-probabilidad-' +
+          i +
+          '"><th># Iteracion ' +
+          (i + 1) +
+          "</th></tr></thead><tbody>" +
+          '<tr id="row-fx-usd-probabilidad-' +
+          i +
+          '"><th>Fx ' +
+          UsdFx[i][j] +
+          "</th></tr>";
+      } else {
+        $("#row-iteracion-probabilidad-" + i).append(
+          "<th>" + (i + 1) + ", " + j + "</th>"
+        );
+        $("#row-fx-usd-probabilidad-" + i).append(
+          "<td>" + PandlNetos[i][j - 1] + "</td>"
+        );
 
         // Checar si es éxito o pérdida
-        if (Math.sign(PandlNetos[i][j - 1]) == 1) {
+        if (Math.sign(parseFloat(PandlNetos[i][j - 1])) == 1) {
           // Éxito
           exitos++;
-        }
-        else if (Math.sign(PandlNetos[i][j - 1]) == -1) {
+        } else if (Math.sign(parseFloat(PandlNetos[i][j - 1])) == -1) {
           // Pérdida
           perdidas++;
         }
@@ -402,6 +494,6 @@ function probabilidad() {
   var probabilidadExito = document.getElementById("probabilidad-exito");
   var probabilidadPerdida = document.getElementById("probabilidad-perdida");
 
-  probabilidadExito.innerHTML += (exitos / total).toFixed(2);
-  probabilidadPerdida.innerHTML += (perdidas / total).toFixed(2);
+  probabilidadExito.innerHTML += exitos / total;
+  probabilidadPerdida.innerHTML += perdidas / total;
 }

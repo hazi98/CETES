@@ -189,7 +189,8 @@
                 </form>
             </div>
             <div class="card">
-                <form action="" onsubmit="event.preventDefault(); guardarSimulacion(); resultados(); probabilidad();">
+                <form action=""
+                    onsubmit="event.preventDefault(); guardarSimulacion(); calcularTodo(); resultados(); probabilidad();">
                     <div class="card-header" id="heading-datos-simulacion">
                         <h2>
                             <button class="btn btn-outline-secondary mdi mdi-refresh" type="button"
@@ -219,26 +220,34 @@
                                         onchange="obtenerDatos()">
                                     </select>
                                 </div>
+                                <div class="col-md mb-3">
+                                    <label for="fx-usd-2">Fx nuevo</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">MXN</span>
+                                        </div>
+                                        <input class="form-control" type="number" step="0.01" name="input-fx-usd-2"
+                                            id="fx-usd-2" min="0" required
+                                            onchange="actualizarSimulacion(); guardarSimulacion();">
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-secondary mdi mdi-chevron-right"
+                                                id="btn-aplicar-fx" onclick="propagarFx()">Propagar Fx a
+                                                iteración</button>
+                                        </div>
+                                        <div class="invalid-feedback">
+                                            Ingrese una factor de conversión válido.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
                                 <div class="col-md-3 mb-3">
                                     <label for="index-tasa">Iteración tasa</label>
                                     <select name="select-index-tasa" id="index-tasa" class="form-control "
                                         onchange="obtenerDatos()">
                                     </select>
                                 </div>
-                                <div class="col-md-3 mb-3">
-                                    <button type="button" class="btn btn-secondary mdi mdi-chevron-down"
-                                        id="btn-aplicar-tasa" onclick="propagarTasa()">Propagar Tasa
-                                        a
-                                        iteraciones </button>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <button type="button" class="btn btn-secondary mdi mdi-chevron-right"
-                                        id="btn-aplicar-fx" onclick="propagarFx()">Propagar Fx a
-                                        iteración</button>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="col-md-3 mb-3">
+                                <div class="col-md mb-3">
                                     <label for="tasa-cetes">Tasa CETES</label>
                                     <div class="input-group mb-3">
                                         <input class="form-control" type="number" name="input-tasa-cetes" step="0.01"
@@ -247,26 +256,18 @@
                                         <div class="input-group-append">
                                             <span class="input-group-text">%</span>
                                         </div>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-secondary mdi mdi-chevron-down"
+                                                id="btn-aplicar-tasa" onclick="propagarTasa()">Propagar Tasa a
+                                                iteraciones </button>
+                                        </div>
                                         <div class="invalid-feedback">
                                             Ingrese una tasa CETES válida.
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3 mb-3">
-                                    <label for="fx-usd-2">Fx USD → MXN nuevo</label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">MXN</span>
-                                        </div>
-                                        <input class="form-control" type="number" step="0.01" name="input-fx-usd-2"
-                                            id="fx-usd-2" min="0" required
-                                            onchange="actualizarSimulacion(); guardarSimulacion();">
-                                        <div class="invalid-feedback">
-                                            Ingrese una factor de conversión válido.
-                                        </div>
-
-                                    </div>
-                                </div>
+                            </div>
+                            <div class="form-row">
                                 <div class="col-md-3 mb-3">
                                     <label for="dias-restantes">Días restantes</label>
                                     <div class="input-group mb-3">
