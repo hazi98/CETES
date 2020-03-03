@@ -109,7 +109,7 @@
                                             <option value="28">28</option>
                                             <option value="91">91</option>
                                             <option selected value="182">182</option>
-                                            <option value="336">336</option>
+                                            <option value="364">364</option>
                                         </select>
                                         <div class="input-group-append">
                                             <span class="input-group-text">días</span>
@@ -157,7 +157,7 @@
                                     <label for="dias-despues">Días después</label>
                                     <div class="input-group mb-3">
                                         <input class="form-control" type="number" name="input-dias-despues"
-                                            id="dias-despues" min="0" required onchange="actualizarSimulacion()">
+                                            id="dias-despues" min="0" required onchange="actualizarInversion()">
                                         <div class="input-group-append">
                                             <span class="input-group-text">días</span>
                                         </div>
@@ -189,7 +189,7 @@
                 </form>
             </div>
             <div class="card">
-                <form action="" onsubmit="event.preventDefault(); guardarSimulacion(); resultados();">
+                <form action="" onsubmit="event.preventDefault(); guardarSimulacion(); resultados(); probabilidad();">
                     <div class="card-header" id="heading-datos-simulacion">
                         <h2>
                             <button class="btn btn-outline-secondary mdi mdi-refresh" type="button"
@@ -226,17 +226,16 @@
                                     </select>
                                 </div>
                                 <div class="col-md-3 mb-3">
-                                    <button type="button" class="btn btn-secondary" id="btn-aplicar-fx"
-                                        onclick="propagarFx()">Propagar Fx a
-                                        iteración</button>
+                                    <button type="button" class="btn btn-secondary mdi mdi-chevron-down"
+                                        id="btn-aplicar-tasa" onclick="propagarTasa()">Propagar Tasa
+                                        a
+                                        iteraciones </button>
                                 </div>
                                 <div class="col-md-3 mb-3">
-                                    <button type="button" class="btn btn-secondary" id="btn-aplicar-tasa"
-                                        onclick="propagarTasa()">Propagar Tasa
-                                        a
-                                        iteraciones</button>
+                                    <button type="button" class="btn btn-secondary mdi mdi-chevron-right"
+                                        id="btn-aplicar-fx" onclick="propagarFx()">Propagar Fx a
+                                        iteración</button>
                                 </div>
-
                             </div>
                             <div class="form-row">
                                 <div class="col-md-3 mb-3">
@@ -361,7 +360,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary" value="Send">Guardar</button>
+                            <button type="button" class="btn btn-primary" onclick="guardarSimulacion()">Guardar</button>
                             <button type="reset" class="btn btn-warning mdi mdi-alert">Limpiar datos</button>
                             <button type="button" class="btn btn-danger mdi mdi-delete"
                                 onclick="borrar(); obtenerDatos();">Restablecer
@@ -387,9 +386,34 @@
                         </div>
                     </div>
                     <div class="card-body" id="card-resultados" hidden>
-                        <table class="table">
+                        <div id="tabla-resultados">
 
-                        </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="heading-probabilidad">
+                    <h2>
+                        <button class="btn btn-outline-secondary mdi mdi-currency-usd-off" type="button"
+                            data-toggle="collapse" data-target="#body-probabilidad" id="btn-datos-probabilidad">
+                            Probabilidad
+                        </button>
+                    </h2>
+                </div>
+                <div class="collapse" id="body-probabilidad" data-parent="#accordion-cetes">
+                    <div class="card-body" id="alert-probabilidad">
+                        <div class="alert alert-danger mdi mdi-alert" role="alert">
+                            Debe de introducir los datos iniciales y de simulación para poder continuar.
+                        </div>
+                    </div>
+                    <div class="card-body" id="card-probabilidad" hidden>
+                        <div id="tabla-probabilidad">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <p id="probabilidad-exito"><b>Probabilidad de éxito: </b></p>
+                            <p id="probabilidad-perdida"><b>Probabilidad de pérdida: </b></p>
+                        </div>
                     </div>
                 </div>
             </div>

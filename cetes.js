@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 var validated = false;
 
 var Visitado;
@@ -33,16 +34,16 @@ function actualizarInversion() {
   }
   switch (terminoPlazo.value) {
     case "28":
-      tasaRendimiento.value = 7.25;
+      tasaRendimiento.value = 6.91;
       break;
     case "91":
-      tasaRendimiento.value = 7.3;
+      tasaRendimiento.value = 6.86;
       break;
     case "182":
-      tasaRendimiento.value = 7.25;
+      tasaRendimiento.value = 6.73;
       break;
-    case "336":
-      tasaRendimiento.value = 7.18;
+    case "364":
+      tasaRendimiento.value = 6.66;
       break;
     default:
       break;
@@ -52,12 +53,12 @@ function actualizarInversion() {
     (porcentajeRendimiento /
       (1 + (porcentajeRendimiento * terminoPlazo.value) / 360)) *
     100
-  ).toFixed(2);
+  ).toFixed(4);
   precio.value = (
     valorNominal /
     (1 + (porcentajeRendimiento * terminoPlazo.value) / 360)
-  ).toFixed(2);
-  inversionCapital.value = precio.value * numTitulos.value;
+  ).toFixed(4);
+  inversionCapital.value = (precio.value * numTitulos.value).toFixed(2);
 }
 
 function continuar() {
@@ -199,13 +200,13 @@ function actualizarSimulacion() {
   tasaDescuento.value = (
     (tasaCetes / (1 + (tasaCetes * diasRestantes.value) / 360)) *
     100
-  ).toFixed(2);
+  ).toFixed(4);
   precio2.value = (
     valorNominal /
     (1 + (tasaCetes * diasRestantes.value) / 360)
-  ).toFixed(2);
+  ).toFixed(4);
   mxnPrincipales.value = (numTitulos * precio2.value).toFixed(2);
-  if (usdFx != "") {
+  if (!isNaN(usdFx) && usdFx != "" && parseFloat(usdFx) != 0.00) {
     usdPrincipales.value = (mxnPrincipales.value / usdFx).toFixed(2);
     mxnPandl.value = parseFloat(
       mxnPrincipales.value - inversionCapital
@@ -215,6 +216,17 @@ function actualizarSimulacion() {
     pandlNetos.value = (
       parseFloat(pandlFx.value) + parseFloat(usdPandl.value)
     ).toFixed(2);
+  }
+}
+
+function calcularTodo() {
+  var i = document.getElementById("index-simulacion").value;
+  var j = document.getElementById("index-tasa").value;
+  i -= 1; // Quitar 1
+  j -= 1; // Quitar 1
+
+  for (let i = 0; i < array.length; i++) {
+
   }
 }
 
@@ -299,13 +311,97 @@ function borrar() {
 
 function resultados() {
   var numSimulaciones = document.getElementById("num-simulaciones").value;
+  numSimulaciones = parseInt(numSimulaciones);
   var numTasas = document.getElementById("num-tasas").value;
-  for (let i = 0; i < numSimulaciones; i++) {
-    for (let j = 0; j < numTasas + 1; j++) {}
+  numTasas = parseInt(numTasas);
+  var tablaResultados = document.getElementById("tabla-resultados");
+  tablaResultados.innerHTML = '';
+  for (var i = 0; i < numSimulaciones; i++) {
+    for (var j = 0; j < (numTasas + 1); j++) {
+      // Poner tabla de resultados
+      if (j == 0) {
+        // Renglon de encabezados
+        tablaResultados.innerHTML += '<table class="table my-3"><thead><tr scope="col" id="row-iteracion-' + i + '"><th># Iteracion ' + (i + 1) + "</th></tr></thead><tbody>" +
+          '<tr id="row-tasa-cetes-' + i + '"><th>Tasa CETES</th></tr>' +
+          '<tr id="row-fx-usd-2-' + i + '"><th>Fx USD → MXN nuevo</th></tr>' +
+          '<tr id="row-dias-restantes-' + i + '"><th>Días restantes</th></tr>' +
+          '<tr id="row-tasa-descuento-2-' + i + '"><th>Tasa de descuento</th></tr>' +
+          '<tr id="row-precio-cete-2-' + i + '"><th>Precio CETE</th></tr>' +
+          '<tr id="row-mxn-principales-' + i + '"><th>Inversión inicial nuevo Fx (MXN)</th></tr>' +
+          '<tr id="row-usd-principales-' + i + '"><th>Inversión inicial nuevo Fx (USD)</th></tr>' +
+          '<tr id="row-pandl-mxn-' + i + '"><th>Profit & Loss (MXN)</th></tr>' +
+          '<tr id="row-pandl-usd-' + i + '"><th>Profit & Loss (USD)</th></tr>' +
+          '<tr id="row-pandl-fx-usd-' + i + '"><th>Profit & Loss por Fx a USD</th></tr>' +
+          '<tr id="row-pandl-netos-usd-' + i + '"><th>Profit & Loss netos (USD)</th></tr>';
+      }
+      else {
+        // Renglones
+        $("#row-iteracion-" + i).append("<th>" + (i + 1) + ", " + j + "</th>");
+        $("#row-tasa-cetes-" + i).append("<td>" + TasaCetes[i][j - 1] + "</td>");
+        $("#row-fx-usd-2-" + i).append("<td>" + UsdFx[i][j - 1] + "</td>");
+        $("#row-dias-restantes-" + i).append("<td>" + DiasRestantes[i][j - 1] + "</td>");
+        $("#row-tasa-descuento-2-" + i).append("<td>" + TasaDescuento[i][j - 1] + "</td>");
+        $("#row-precio-cete-2-" + i).append("<td>" + Precio2[i][j - 1] + "</td>");
+        $("#row-mxn-principales-" + i).append("<td>" + MxnPrincipales[i][j - 1] + "</td>");
+        $("#row-usd-principales-" + i).append("<td>" + UsdPrincipales[i][j - 1] + "</td>");
+        $("#row-pandl-mxn-" + i).append("<td>" + MxnPandl[i][j - 1] + "</td>");
+        $("#row-pandl-usd-" + i).append("<td>" + UsdPandl[i][j - 1] + "</td>");
+        $("#row-pandl-fx-usd-" + i).append("<td>" + PandlFx[i][j - 1] + "</td>");
+        $("#row-pandl-netos-usd-" + i).append("<td>" + PandlNetos[i][j - 1] + "</td>");
+      }
+    }
+    tablaResultados.innerHTML += "</tbody></table>";
   }
 
   $("#alert-resultados").attr("hidden", true);
+  $("#alert-probabilidad").attr("hidden", true);
   $("#card-resultados").attr("hidden", false);
+  $("#card-probabilidad").attr("hidden", false);
 
   $("#body-resultados").collapse("show");
+  $("#body-probabilidad").collapse("show");
+}
+
+function probabilidad() {
+  var numSimulaciones = document.getElementById("num-simulaciones").value;
+  numSimulaciones = parseInt(numSimulaciones);
+  var numTasas = document.getElementById("num-tasas").value;
+  numTasas = parseInt(numTasas);
+  var tablaProbabilidad = document.getElementById("tabla-probabilidad");
+  tablaProbabilidad.innerHTML = '';
+
+  var exitos = 0;
+  var perdidas = 0;
+  var total = numSimulaciones * numTasas;
+
+  for (var i = 0; i < numSimulaciones; i++) {
+    for (var j = 0; j < (numTasas + 1); j++) {
+      if (j == 0) {
+        tablaProbabilidad.innerHTML += '<table class="table my-3"><thead><tr scope="col" id="row-iteracion-probabilidad-' + i + '"><th># Iteracion ' + (i + 1) + "</th></tr></thead><tbody>" +
+          '<tr id="row-fx-usd-probabilidad-' + i + '"><th>Fx ' + UsdFx[i][j] + "</th></tr>";
+      }
+      else {
+        $("#row-iteracion-probabilidad-" + i).append("<th>" + (i + 1) + ", " + j + "</th>");
+        $("#row-fx-usd-probabilidad-" + i).append("<td>" + PandlNetos[i][j - 1] + "</td>");
+
+        // Checar si es éxito o pérdida
+        if (Math.sign(PandlNetos[i][j - 1]) == 1) {
+          // Éxito
+          exitos++;
+        }
+        else if (Math.sign(PandlNetos[i][j - 1]) == -1) {
+          // Pérdida
+          perdidas++;
+        }
+      }
+    }
+    tablaProbabilidad.innerHTML += "</tbody>";
+  }
+  tablaProbabilidad.innerHTML += "</table>";
+
+  var probabilidadExito = document.getElementById("probabilidad-exito");
+  var probabilidadPerdida = document.getElementById("probabilidad-perdida");
+
+  probabilidadExito.innerHTML += (exitos / total).toFixed(2);
+  probabilidadPerdida.innerHTML += (perdidas / total).toFixed(2);
 }
