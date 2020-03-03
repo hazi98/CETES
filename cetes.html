@@ -153,7 +153,7 @@
                                             name="input-inversion-capital" id="inversion-capital" min="0" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-5 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="dias-despues">Días después</label>
                                     <div class="input-group mb-3">
                                         <input class="form-control" type="number" name="input-dias-despues"
@@ -166,9 +166,17 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-5 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label for="num-simulaciones">Número de iteraciones</label>
                                     <input class="form-control" type="number" min="1" id="num-simulaciones" required>
+                                    <div class="invalid-feedback">
+                                        Ingrese un número válido.
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="num-tasas">Número de variaciones de tasa</label>
+                                    <input type="number" class="form-control" min="1" name="input-num-tasas"
+                                        id="num-tasas" required>
                                     <div class="invalid-feedback">
                                         Ingrese un número válido.
                                     </div>
@@ -181,7 +189,7 @@
                 </form>
             </div>
             <div class="card">
-                <form action="">
+                <form action="" onsubmit="event.preventDefault(); guardarSimulacion(); resultados();">
                     <div class="card-header" id="heading-datos-simulacion">
                         <h2>
                             <button class="btn btn-outline-secondary mdi mdi-refresh" type="button"
@@ -197,20 +205,46 @@
                             </div>
                         </div>
                         <div class="card-body" id="card-datos-simulacion" hidden>
+                            <div class="alert alert-success alert-dismissible fade mdi mdi-alert" role="alert"
+                                id="cambios-guardados">
+                                Cambios guardados.
+                                <button type="button" class="close" onclick="dismissAlert();">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
                             <div class="form-row">
-                                <div class="col-md-5 mb-3">
-                                    <label for="index-simulacion">Iteración</label>
-                                    <select name="select-index-simulacion" id="index-simulacion" class="form-control ">
-
+                                <div class="col-md-3 mb-3">
+                                    <label for="index-simulacion">Iteración Fx</label>
+                                    <select name="select-index-simulacion" id="index-simulacion" class="form-control "
+                                        onchange="obtenerDatos()">
                                     </select>
                                 </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="index-tasa">Iteración tasa</label>
+                                    <select name="select-index-tasa" id="index-tasa" class="form-control "
+                                        onchange="obtenerDatos()">
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <button type="button" class="btn btn-secondary" id="btn-aplicar-fx"
+                                        onclick="propagarFx()">Propagar Fx a
+                                        iteración</button>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <button type="button" class="btn btn-secondary" id="btn-aplicar-tasa"
+                                        onclick="propagarTasa()">Propagar Tasa
+                                        a
+                                        iteraciones</button>
+                                </div>
+
                             </div>
                             <div class="form-row">
                                 <div class="col-md-3 mb-3">
                                     <label for="tasa-cetes">Tasa CETES</label>
                                     <div class="input-group mb-3">
                                         <input class="form-control" type="number" name="input-tasa-cetes" step="0.01"
-                                            id="tasa-cetes" min="0" required onchange="actualizarSimulacion()">
+                                            id="tasa-cetes" min="0" required
+                                            onchange="actualizarSimulacion(); guardarSimulacion();">
                                         <div class="input-group-append">
                                             <span class="input-group-text">%</span>
                                         </div>
@@ -226,7 +260,8 @@
                                             <span class="input-group-text">MXN</span>
                                         </div>
                                         <input class="form-control" type="number" step="0.01" name="input-fx-usd-2"
-                                            id="fx-usd-2" min="0" required onchange="actualizarSimulacion()">
+                                            id="fx-usd-2" min="0" required
+                                            onchange="actualizarSimulacion(); guardarSimulacion();">
                                         <div class="invalid-feedback">
                                             Ingrese una factor de conversión válido.
                                         </div>
@@ -328,11 +363,35 @@
                             </div>
                             <button type="submit" class="btn btn-primary" value="Send">Guardar</button>
                             <button type="reset" class="btn btn-warning mdi mdi-alert">Limpiar datos</button>
-                            <button type="button" class="btn btn-danger mdi mdi-delete">Restablecer
+                            <button type="button" class="btn btn-danger mdi mdi-delete"
+                                onclick="borrar(); obtenerDatos();">Restablecer
                                 simulaciones</button>
+                            <button type="submit" class="btn btn-success float-right" value="Send">Continuar</button>
                         </div>
                     </div>
                 </form>
+            </div>
+            <div class="card">
+                <div class="card-header" id="heading-resultados">
+                    <h2>
+                        <button class="btn btn-outline-secondary mdi mdi-file-document-box" type="button"
+                            data-toggle="collapse" data-target="#body-resultados" id="btn-datos-simulacion">
+                            Resultados
+                        </button>
+                    </h2>
+                </div>
+                <div class="collapse" id="body-resultados" data-parent="#accordion-cetes">
+                    <div class="card-body" id="alert-resultados">
+                        <div class="alert alert-danger mdi mdi-alert" role="alert">
+                            Debe de introducir los datos iniciales y de simulación para poder continuar.
+                        </div>
+                    </div>
+                    <div class="card-body" id="card-resultados" hidden>
+                        <table class="table">
+
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
